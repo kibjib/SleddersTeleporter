@@ -11,8 +11,7 @@ using UnityEngine.SceneManagement;
 namespace SleddersTeleporterNs
 {   
     public class SleddersTeleporter : MelonMod
-    {
-        //private TeleportMapViewController teleporter;
+    {        
         private TeleportMapController teleportMap;
 
         //Game reports player position as X == <east/west>, y == vertical, z == <north/south>
@@ -91,8 +90,7 @@ namespace SleddersTeleporterNs
             {
                 MelonLogger.Msg("Found MapController object");
 
-                //Construct our objects once we are in a scene with a map
-                //this.teleporter = new TeleportMapViewController();
+                //Construct our objects once we are in a scene with a map                
                 this.teleportMap = new TeleportMapController();
             }
             this.chatController = (ChatController2)GameObject.FindAnyObjectByType<ChatController2>();
@@ -246,8 +244,7 @@ namespace SleddersTeleporterNs
                     //If we're not looking at the map, then use text boxes
                     else
                     {
-                        GameObject gameObject = GameObject.FindGameObjectWithTag("Player");
-                        //if (!((gameObject != null) ? gameObject.GetComponent<SnowmobileController>() : null).hasJoinedChallenge)
+                        GameObject gameObject = GameObject.FindGameObjectWithTag("Player");                        
                         if(gameObject != null)
                         {
                             this.player = gameObject;
@@ -329,6 +326,7 @@ namespace SleddersTeleporterNs
         }
     }
 
+    //Creating a separate class to access protected member mapSize. Saves us having to do reflection to read it
     public class TeleportMapController : MapController {
 
         private Vector2 origin2D = new Vector2();

@@ -15,7 +15,7 @@ Download the SleddersTeleporter.dll and place it in your mods folder (Ex. C:\Pro
 ## Riding Behavior
 Toggles coordinate menu. You can view you current position and type in new coordinates, then click teleport
 
-## Map View behavior
+## Map View Behavior
 Open the game's map, then use the teleport keybind to instantly teleport to your cursor's location on the map
 
 ## Default controls

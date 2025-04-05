@@ -5,6 +5,8 @@ The same teleporter is also featured in Ori0n1's Sled Tuner: ![SledTuner](https:
 
 This repo is to serve the standalone updates to the teleporter originally developed by me.
 
+The mod can be freely used and updated as you wish. All I ask is that you credit me in some way :)
+
 ## Installation
 Download and install Melonloader for sledders: ![MelonLoader](https://melonwiki.xyz/ "melonwiki.xyz")
 

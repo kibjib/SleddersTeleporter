@@ -6,7 +6,7 @@ The same teleporter is also featured in Ori0n1's Sled Tuner: ![SledTuner](https:
 This repo is to serve the standalone updates to the teleporter originally developed by me.
 
 ## Installation
-Download and install Melonloader for sledders: https://melonwiki.xyz/
+Download and install Melonloader for sledders: ![MelonLoader](https://melonwiki.xyz/ "melonwiki.xyz")
 
 Download the SleddersTeleporter.dll and place it in your mods folder (Ex. C:\Program Files (x86)\Steam\steamapps\common\Sledders\Mods)
 
@@ -31,4 +31,4 @@ Open this file in a text editor and replace the values with your desired control
 For controller input, use this diagram to determine the correct value for your button.
 
 For example, clicking the left stick is mapped to JoystickButton8. If you would like to change it to right bumper, you would use JoystickButton5
-![Alt text](unityControllerLayout.jpeg?raw=true "Unity Controller Layout")
+![ControllerLayout](unityControllerLayout.jpeg?raw=true "Unity Controller Layout")

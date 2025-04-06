@@ -20,7 +20,7 @@ namespace SleddersTeleporterNs
         private string playerYPos = "";
 
         private string targetXPos = "";
-        private string targetYPos = "";
+        private string targetYPos = "";        
 
         private bool createTextBoxes;
         private bool teleportPlayer;
@@ -29,6 +29,8 @@ namespace SleddersTeleporterNs
         private GameObject player = null;
         private ChatController2 chatController = null;
         private string chatOpenVarName = "";
+
+        private Rect menuRect = new Rect(Screen.width - 310, 10, 300, 500); // Initial position and size
 
         KeyCode controllerKey;
         KeyCode keyboardKey;        
@@ -184,8 +186,9 @@ namespace SleddersTeleporterNs
                     MelonLogger.Msg("Found player object! Attempting teleport!");
                     MelonLogger.Msg("Current pos: (" + player.transform.position.x + "," + player.transform.position.z + ")");
 
-                    //Y component is don't care, because the game's method will fix that for us
-                    Vector3 targetPosition = new Vector3((float)Convert.ToDouble(this.targetXPos), 0f, (float)Convert.ToDouble(this.targetYPos));                    
+                    //Y component is don't care, because the game's method will fix that for us                   
+                    Vector3 targetPosition = new Vector3((float)Convert.ToDouble(this.targetXPos), 0f, (float)Convert.ToDouble(this.targetYPos));                                        
+
                     tryTeleportPlayer(targetPosition, Quaternion.Euler(0f, 0f, 0f));
                     MelonLogger.Msg("New pos: (" + player.transform.position.x + "," + player.transform.position.z + ")\n");
 
@@ -209,8 +212,8 @@ namespace SleddersTeleporterNs
                 if (this.player != null)
                 {
                     //Update the X and Y position for the OnGUI method below so our position constantly updates
-                    playerXPos = player.transform.position.x.ToString();
-                    playerYPos = player.transform.position.z.ToString();
+                    playerXPos = player.transform.position.x.ToString("n2");
+                    playerYPos = player.transform.position.z.ToString("n2");
                 }
                 else
                 {
@@ -268,47 +271,60 @@ namespace SleddersTeleporterNs
 
         public override void OnGUI()
         {
-            base.OnGUI();            
+            base.OnGUI();
+            DrawTeleporterMenu();           
+        }
 
-            if (this.createTextBoxes)
+        //Credit to Samisalami and Chad_Brochill for GUI routine
+        private void DrawTeleporterMenuWindow(int windowID)
+        {
+            GUI.skin.textField.fontSize = 20;
+            GUI.skin.box.fontSize = 20;
+            GUI.skin.button.fontSize = 20;
+           
+            Cursor.visible = true;
+
+            GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
+            centeredStyle.alignment = TextAnchor.MiddleCenter;
+
+            GUIStyle largeFontStyle = new GUIStyle(GUI.skin.label);
+            largeFontStyle.fontSize = 20;
+            
+
+            menuRect = new Rect(Screen.width - 310, 10, 300, 250);
+            Vector2Int menuSize = new Vector2Int((int)menuRect.width, (int)menuRect.height);
+
+            GUI.Label(new Rect(20, 30, 200, 40), "Current position",largeFontStyle);
+            GUI.Label(new Rect(20, 60, 200, 40), "(" + playerXPos + ", " + playerYPos + ")", largeFontStyle);            
+            GUI.Label(new Rect(20, 90, 200, 40), "Target position: ", largeFontStyle);           
+
+            //Taking input as strings because float.parse is annoying with backspaces and decimal points
+            targetXPos = GUI.TextField(new Rect(20, 120, 130, 40), targetXPos, 8);
+            targetXPos = Regex.Replace(targetXPos, @"[^0-9\.-]", "");
+            targetYPos = GUI.TextField(new Rect(150, 120, 130, 40), targetYPos, 8);
+            targetYPos = Regex.Replace(targetYPos, @"[^0-9\.-]", "");
+
+            if (GUI.Button(new Rect(50, 180, 200, 40 ), "Teleport"))
             {
-                GUI.skin.textField.fontSize = 20;
-                GUI.skin.box.fontSize = 20;
-                GUI.skin.button.fontSize = 20;                
+                MelonLogger.Msg("Attempting text teleport to (" + this.targetXPos + "," + this.targetYPos + ")");
+                this.createTextBoxes = false;
+                Cursor.visible = false;
+                this.teleportPlayer = true;
+                this.tryTextTeleport();
+            }            
 
-                int boxWidth = 100;
-                int boxHeight = 40;
-                int boxXOffset = 10;
-                int boxYOffset = 10;       
-                
-                GUI.Box(new Rect(boxWidth*0 + boxXOffset, boxHeight*0 + boxYOffset, boxWidth*2, boxHeight), "kibjib's Teleporter");
-                
-                GUI.Box(new Rect(boxWidth*0 + boxXOffset, boxHeight*1 + boxYOffset, boxWidth, boxHeight), "Player X: ");
-                GUI.Box(new Rect(boxWidth*1 + boxXOffset, boxHeight*1 + boxYOffset, boxWidth, boxHeight), playerXPos);
+            centeredStyle.fontSize = 15;
+            GUI.Label(new Rect(menuSize.x / 2 - 100, menuSize.y - 40, 200, 40), "Made by kibjib", centeredStyle);
 
-                GUI.Box(new Rect(boxWidth*0 + boxXOffset, boxHeight*2 + boxYOffset, boxWidth, boxHeight), "Player Y: ");
-                GUI.Box(new Rect(boxWidth*1 + boxYOffset, boxHeight*2 + boxYOffset, boxWidth, boxHeight), playerYPos);                
+            GUI.DragWindow(new Rect(0, 0, menuSize.x, 20));            
+        }
 
-                //Get user input for desired coordinates
-                GUI.Box(new Rect(boxWidth*0 + boxXOffset, boxHeight*3 + boxYOffset, boxWidth, boxHeight), "Target X:");
-                targetXPos = GUI.TextField(new Rect(boxWidth*1 + boxXOffset, boxHeight*3 + boxYOffset, boxWidth, boxHeight), targetXPos, 8);
-
-                //Could use a better regex here to only allow a single -
-                //Doing a regex replace on any illegal characters is much easier though
-                targetXPos = Regex.Replace(targetXPos, @"[^0-9\.-]", "");
-
-                GUI.Box(new Rect(boxWidth*0 + boxXOffset, boxHeight*4 + boxYOffset, boxWidth, boxHeight), "Target Y:");
-                targetYPos = GUI.TextField(new Rect(boxWidth * 1 + boxXOffset, boxHeight * 4 + boxYOffset, boxWidth, boxHeight), targetYPos, 8);
-                targetYPos = Regex.Replace(targetYPos, @"[^0-9\.-]", "");
-
-                if (GUI.Button(new Rect(boxWidth*0 + boxXOffset, boxHeight*5 + boxYOffset, 2*boxWidth, boxHeight), "Teleport"))
-                {
-                    MelonLogger.Msg("Attempting text teleport to (" + this.targetXPos + "," + this.targetYPos + ")");
-                    this.createTextBoxes = false;
-                    this.teleportPlayer = true;
-                    this.tryTextTeleport();
-                }
-            }
+        private void DrawTeleporterMenu()
+        {
+            if (createTextBoxes)
+            {
+                menuRect = GUI.Window(290384, menuRect, DrawTeleporterMenuWindow, "Teleporter");
+            }            
         }
 
         public override void OnApplicationQuit()

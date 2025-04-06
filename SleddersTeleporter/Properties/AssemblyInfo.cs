@@ -15,7 +15,7 @@ using SleddersTeleporterNs;
 [assembly: AssemblyCopyright("Copyright ©  2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: MelonInfo(typeof(SleddersTeleporter), "Sledders Teleporter", "2025.04.05", "kibjib")]
+[assembly: MelonInfo(typeof(SleddersTeleporter), "Sledders Teleporter", "2025.04.06", "kibjib")]
 [assembly: MelonGame("Hanki Games", "Sledders")]
 
 // Setting ComVisible to false makes the types in this assembly not visible

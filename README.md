@@ -14,10 +14,10 @@ Download the SleddersTeleporter.dll and place it in your mods folder (Ex. C:\Pro
 
 ## Riding Behavior
 Toggles coordinate menu. You can view you current position and type in new coordinates, then click teleport
-
+![Riding View](TeleporterRiding.png?raw=true "Teleporter Riding UI")
 ## Map View Behavior
 Open the game's map, then use the teleport keybind to instantly teleport to your cursor's location on the map
-
+![Map View](TeleporterMap.png?raw=true "Teleporter Map UI")
 ## Default controls
 ### Keyboard
 * T
@@ -26,11 +26,16 @@ Open the game's map, then use the teleport keybind to instantly teleport to your
 * Left Stick (click)
 
 ## Updating controls
-On first launch, the mod will create a TeleporterControls.cfg file in your mods directory
+On first launch, the mod will create a TeleporterControls.cfg file in your mods directory with the following contents:
+```
+keyboard=T
+controller=JoystickButton8
+```
 
-Open this file in a text editor and replace the values with your desired control.
+Open this file in a text editor (Notepad, for example) and replace the values with your desired control.
 
-For controller input, use this diagram to determine the correct value for your button.
+![ControllerLayout](unityControllerLayout.jpeg?raw=true "Unity Controller Layout")
+
+For controller input, use this diagram to determine the correct value for your button. Right now, only buttons are supported. Anything with an "axis" is unsupported as an input.
 
 For example, clicking the left stick is mapped to JoystickButton8. If you would like to change it to right bumper, you would use JoystickButton5
-![ControllerLayout](unityControllerLayout.jpeg?raw=true "Unity Controller Layout")

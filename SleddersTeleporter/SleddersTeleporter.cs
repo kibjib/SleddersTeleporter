@@ -110,6 +110,57 @@ namespace SleddersTeleporterNs
             }
         }
 
+        public Vector3 GetValidRespawnPosition(Vector3 position, Quaternion rotation)
+        {
+            int iter = 0;
+            float minHeight = 0.5f;
+                        
+            TerrainHelper instance = (TerrainHelper)GameObject.FindAnyObjectByType<TerrainHelper>();
+            float terrainHeightWorld = instance.GetTerrainHeightWorld(instance.GetTerrainSpot(position.x, position.z));                        
+            MelonLogger.Msg("Terrain height at target = " + terrainHeightWorld);
+
+            Vector3 positionWithHeight = new Vector3(position.x, Mathf.Max(minHeight, terrainHeightWorld), position.z);
+            
+            int traxLayer = LayerMask.NameToLayer("TraxCharacter");
+            int roadLayer = LayerMask.NameToLayer("Road");
+
+            bool flag;
+            do
+            {
+                iter++;
+                flag = false;
+                //Send out a raycast and see what we run into at our target position
+                foreach (RaycastHit raycastHit in Physics.SphereCastAll(positionWithHeight, 1f, rotation * Vector3.forward, 1f))
+                {
+                    //If we hit road or terrain, we can teleport here!
+                    if (raycastHit.collider.gameObject.layer == roadLayer || raycastHit.collider is TerrainCollider)
+                    {
+                        flag = true;
+                        //Add on a bit of margin so you don't teleport into the ground                        
+                        float newHeight = instance.GetTerrainHeightWorld(instance.GetTerrainSpot(positionWithHeight.x, positionWithHeight.z)) + 0.3f;
+                        positionWithHeight.y = Mathf.Max(minHeight, newHeight);
+                    }
+                    else
+                    {
+                        //Hit something other than road or terrain. Figure out where it is and move away from it
+                        SnowmobileController componentInParent = raycastHit.collider.GetComponentInParent<SnowmobileController>();
+                        AddForce addForce;
+                        if ((componentInParent == null || !componentInParent.CompareTag("Player")) && !raycastHit.collider.TryGetComponent<AddForce>(out addForce) && raycastHit.collider.name != "Driver" && raycastHit.collider.GetComponentInParent<Border>() == null && raycastHit.collider.gameObject.layer != traxLayer)
+                        {
+                            flag = true;
+                            Vector3 offset = new Vector3(positionWithHeight.x - raycastHit.point.x, 0f, positionWithHeight.z - raycastHit.point.z);
+                            offset.Normalize();
+                            positionWithHeight += offset;
+                            float terrainHeightWorld2 = instance.GetTerrainHeightWorld(instance.GetTerrainSpot(positionWithHeight.x, positionWithHeight.z));
+                            positionWithHeight.y = Mathf.Max(positionWithHeight.y, terrainHeightWorld2); 
+                        }
+                    }
+                }
+            }
+            while (iter < 10 && flag);
+            return positionWithHeight;
+        }
+
         public void tryTeleportPlayer(Vector3 position, Quaternion rotation)
         {
             GameObject gameObject = GameObject.FindGameObjectWithTag("Player");
@@ -121,14 +172,8 @@ namespace SleddersTeleporterNs
                     MelonLogger.Msg("Cannot respawn: respawn controller not found.");
                     return;
                 }
-                Vector3 validRespawnPosition = respawnable.GetValidRespawnPosition(position, rotation);
-                respawnable.Respawn(validRespawnPosition, rotation, true);
-
-                GameObject hud = GameObject.FindGameObjectWithTag("Hud");
-                if (hud != null)
-                {
-                    hud.GetComponent<HudController>().Notify("kibjib's teleporter: Player teleported!", Color.white, 1.5f, 1f, false);
-                }
+                Vector3 validRespawnPosition = this.GetValidRespawnPosition(position, rotation);
+                respawnable.Respawn(validRespawnPosition, rotation, true);                
             }
             else
             {
